@@ -1,6 +1,5 @@
 class User:
     def __init__(self, user_obj):
-        self.sticky_notifications = user_obj["notifications"]
         self.auth = user_obj["data"]["auth"]
         self.achievements = user_obj["data"]["achievements"]
         self.backer = user_obj["data"]["backer"]
@@ -20,7 +19,7 @@ class User:
         self.guilds = user_obj["data"]["guilds"]
         self.pinned_items_order = user_obj["data"]["pinnedItemsOrder"]
         self.new_messages = user_obj["data"]["newMessages"]
-        self.unread_notifications = user_obj["data"]["notifications"]
+        self.notifications = user_obj["data"]["notifications"]
         self.tags = user_obj["data"]["tags"]
         self.extra = user_obj["data"]["extra"]
         self.push_devices = user_obj["data"]["pushDevices"]

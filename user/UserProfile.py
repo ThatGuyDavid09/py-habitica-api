@@ -1,4 +1,4 @@
-class User:
+class UserProfile:
     def __init__(self, user_obj):
         self.auth = user_obj["data"]["auth"]
         self.achievements = user_obj["data"]["achievements"]

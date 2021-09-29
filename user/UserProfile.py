@@ -1,39 +1,76 @@
+from uuid import UUID
+
+import requests
+import json
+
+from errors.NotAuthorized import NotAuthorized
+from user.StatType import StatType
+
+
 class UserProfile:
-    def __init__(self, user_obj):
-        self.auth = user_obj["data"]["auth"]
-        self.achievements = user_obj["data"]["achievements"]
-        self.backer = user_obj["data"]["backer"]
-        self.contributor = user_obj["data"]["contributor"]
-        self.purchased = user_obj["data"]["purchased"]
-        self.flags = user_obj["data"]["flags"]
-        self.history = user_obj["data"]["history"]
-        self.items = user_obj["data"]["items"]
-        self.invitations = user_obj["data"]["invitations"]
-        self.party = user_obj["data"]["party"]
-        self.preferences = user_obj["data"]["preferences"]
-        self.profile = user_obj["data"]["profile"]
-        self.stats = user_obj["data"]["stats"]
-        self.inbox = user_obj["data"]["inbox"]
-        self.tasks_order = user_obj["data"]["tasksOrder"]
-        self.challenges = user_obj["data"]["challenges"]
-        self.guilds = user_obj["data"]["guilds"]
-        self.pinned_items_order = user_obj["data"]["pinnedItemsOrder"]
-        self.new_messages = user_obj["data"]["newMessages"]
-        self.notifications = user_obj["data"]["notifications"]
-        self.tags = user_obj["data"]["tags"]
-        self.extra = user_obj["data"]["extra"]
-        self.push_devices = user_obj["data"]["pushDevices"]
-        self.webhooks = user_obj["data"]["webhooks"]
-        self.pinned_items = user_obj["data"]["pinnedItems"]
-        self.unpinned_items = user_obj["data"]["unpinnedItems"]
+    def __init__(self, user_id: UUID, headers, url):
+        self.user_id = user_id
+        self.raw_profile = None
+        self.headers = headers
+        self.url = url
 
-        self.id = user_obj["data"]["id"]
-        self.needs_cron = user_obj["data"]["needsCron"]
+    def _request_profile(self):
+        r = requests.get(self.url + "user", headers=self.headers)
+        json_text = json.loads(r.text)
+        if r.status_code == 200 and json_text["success"]:
+            self.raw_profile = json_text
+        elif r.status_code == 401:
+            raise NotAuthorized(json_text["message"])
+        else:
+            raise ValueError(json_text["message"])
 
-        self.raw = user_obj
+    @property
+    def profile(self):
+        if not self.raw_profile:
+            self._request_profile()
 
-    def get_raw(self):
-        return self.raw
+        return self.raw_profile
 
-    def get_user_id(self):
-        return self.id
+    @property
+    def id(self):
+        return self.user_id
+
+    def allocate_single_stat(self, stat_type: StatType):
+        data = {
+            "stat": stat_type.value
+        }
+        r = requests.post(self.url + "user/allocate", headers=self.headers, data=data)
+        json_text = json.loads(r.text)
+        if r.status_code == 401:
+            raise NotAuthorized(json_text["message"])
+        return json_text
+
+    def allocate_all_stat(self):
+        r = requests.post(self.url + "user/allocate", headers=self.headers)
+        json_text = json.loads(r.text)
+        if r.status_code == 401:
+            raise NotAuthorized(json_text["message"])
+        return json_text
+
+    """
+    
+    """
+    def allocate_bulk_stat(self, int=0, str=0, con=0, per=0):
+        # TODO figure out how on earth this works
+        data = {
+            "stats": {
+                "int": int,
+                "str": str,
+                "con": con,
+                "per": per
+            }
+        }
+        print(data)
+        r = requests.post(self.url + "user/allocate-bulk", headers=self.headers, data=data)
+        json_text = json.loads(r.text)
+        if r.status_code == 401:
+            raise NotAuthorized(json_text["message"])
+        return json_text
+
+    def __repr__(self):
+        return f"<UserProfile [{str(self.user_id)}]>"

@@ -4,6 +4,9 @@ from pprint import pprint
 import json
 import pyperclip
 
+from PyHabitica import PyHabitica
+from user.StatType import StatType
+
 """
 API RETURNS EITHER:
 {
@@ -20,19 +23,11 @@ or
 }
 """
 
-headers = {
-    "x-client": "d009e682-8b82-4e5e-86ef-1cfb16c09f8a-PyHabitica",
-    "x-api-user": "d009e682-8b82-4e5e-86ef-1cfb16c09f8a",
-    "x-api-key": os.environ["API_KEY"]
-}
-
-url = "https://habitica.com/api/v3/"
-r = requests.get(url + "user", headers=headers)
+client = PyHabitica("d009e682-8b82-4e5e-86ef-1cfb16c09f8a", os.environ["API_KEY"])
+user = client.user_id
 
 # pprint(r.headers)
-print(r)
+print(user.id)
 # pprint(json.loads(r.text))
-pyperclip.copy((r.text))
-
-
-
+# pyperclip.copy(json.dumps(user.profile))
+print(user.allocate_bulk_stat(str=0, per=1))

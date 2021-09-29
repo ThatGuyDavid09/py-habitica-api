@@ -1,9 +1,9 @@
+from errors.RequestError import RequestError
 from uuid import UUID
 
 import requests
 import json
 
-from errors.NotAuthorized import NotAuthorized
 from user.StatType import StatType
 
 
@@ -17,12 +17,10 @@ class UserProfile:
     def _request_profile(self):
         r = requests.get(self.url + "user", headers=self.headers)
         json_text = json.loads(r.text)
-        if r.status_code == 200 and json_text["success"]:
-            self.raw_profile = json_text
-        elif r.status_code == 401:
-            raise NotAuthorized(json_text["message"])
-        else:
-            raise ValueError(json_text["message"])
+        if not json_text["success"]:
+            raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
+        
+        self.raw_profile = json_text
 
     @property
     def profile(self):
@@ -41,35 +39,33 @@ class UserProfile:
         }
         r = requests.post(self.url + "user/allocate", headers=self.headers, data=data)
         json_text = json.loads(r.text)
-        if r.status_code == 401:
-            raise NotAuthorized(json_text["message"])
+        if not json_text["success"]:
+            raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
         return json_text
 
     def allocate_all_stat(self):
-        r = requests.post(self.url + "user/allocate", headers=self.headers)
+        r = requests.post(self.url + "user/allocate-now", headers=self.headers)
         json_text = json.loads(r.text)
-        if r.status_code == 401:
-            raise NotAuthorized(json_text["message"])
+        if not json_text["success"]:
+            raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
+
         return json_text
 
-    """
-    
-    """
     def allocate_bulk_stat(self, int=0, str=0, con=0, per=0):
-        # TODO figure out how on earth this works
         data = {
             "stats": {
-                "int": int,
-                "str": str,
-                "con": con,
-                "per": per
+                "int": 1,
+                "str": 2,
+                "con": 3,
+                "per": 4
             }
         }
-        print(data)
-        r = requests.post(self.url + "user/allocate-bulk", headers=self.headers, data=data)
+        # print(data)
+        r = requests.post(self.url + "user/allocate-bulk", headers=self.headers, json=data)
         json_text = json.loads(r.text)
-        if r.status_code == 401:
-            raise NotAuthorized(json_text["message"])
+        if not json_text["success"]:
+            raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
+            
         return json_text
 
     def __repr__(self):

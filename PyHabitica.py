@@ -17,3 +17,6 @@ class PyHabitica:
     @property
     def user_id(self):
         return UserProfile(self.id, self.headers, self.url)
+    
+    def __repr__(self):
+        return f"<PyHabitica [{str(self.user_id)}]>"

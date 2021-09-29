@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import requests
 import os
 from pprint import pprint
@@ -24,10 +26,10 @@ or
 """
 
 client = PyHabitica("d009e682-8b82-4e5e-86ef-1cfb16c09f8a", os.environ["API_KEY"])
-user = client.user_id
+user = client.user
 
 # pprint(r.headers)
-print(user.id)
+# print(user.id)
 # pprint(json.loads(r.text))
 # pyperclip.copy(json.dumps(user.profile))
-print(user.allocate_bulk_stat(str=0, per=1))
+# print(user.buy_mystery_set(UUID("d009e682-8b82-4e5e-86ef-1cfb16c09f8a")))

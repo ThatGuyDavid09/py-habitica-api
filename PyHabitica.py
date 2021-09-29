@@ -1,11 +1,11 @@
 import os
 from uuid import UUID
 
-from user.UserProfile import UserProfile
+from user.User import User
 
 
 class PyHabitica:
-    def __init__(self, user_id, user_api_key):
+    def __init__(self, user_id: str, user_api_key: str):
         self.id = UUID(user_id)
         self.headers = {
             "x-client": "d009e682-8b82-4e5e-86ef-1cfb16c09f8a-PyHabitica",
@@ -15,8 +15,8 @@ class PyHabitica:
         self.url = "https://habitica.com/api/v3/"
 
     @property
-    def user_id(self):
-        return UserProfile(self.id, self.headers, self.url)
-    
+    def user(self):
+        return User(self.id, self.headers, self.url)
+
     def __repr__(self):
-        return f"<PyHabitica [{str(self.user_id)}]>"
+        return f"<PyHabitica [{str(self.id)}]>"

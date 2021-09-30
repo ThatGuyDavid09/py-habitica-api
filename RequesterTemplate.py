@@ -25,3 +25,10 @@ class RequesterTemplate:
         if not json_text["success"]:
             raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
         return json_text
+
+    def _delete_request(self, url_extension, data=None):
+        r = requests.delete(self.url + url_extension, headers=self.headers, data=data)
+        json_text = json.loads(r.text)
+        if not json_text["success"]:
+            raise RequestError(f'{json_text["error"]}: {json_text["message"]}')
+        return json_text

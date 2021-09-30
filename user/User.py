@@ -4,9 +4,14 @@ from uuid import UUID
 
 import requests
 import json
+from user.types.ClassType import ClassType
+from user.types.GemPurchasableType import GemPurchasableType
+from user.types.GoldSellableType import GoldSellableType
+from user.types.HourglassPurchasableType import HourglassPurchasableType
+from user.types.ItemType import ItemType
 
-from user.SpellType import SpellType
-from user.StatType import StatType
+from user.types.SpellType import SpellType
+from user.types.StatType import StatType
 
 
 class User(RequesterTemplate):
@@ -50,7 +55,7 @@ class User(RequesterTemplate):
         # print(data)
         return self._post_request("user/allocate-bulk", json=data)
 
-    def block_unblock_user(self, user: UUID):
+    def toggle_block_user(self, user: UUID):
         data = {
             "uuid": str(user)
         }
@@ -85,6 +90,116 @@ class User(RequesterTemplate):
             }
 
         return self._post_request(f"user/class/cast/{spell.value}", data=data)
+
+    def change_class(self, class_type: ClassType):
+        data = {
+            "class": class_type.value
+        }
+        return self._post_request("user/change-class", data=data)
+
+    def delete_message(self, message_id: UUID):
+        return self._delete_request(f"user/messages/{str(message_id)}")
+    
+    def delete_all_messages(self):
+        return self._delete_request(f"user/messages")
+    
+    def delete_account(self):
+        return self._delete_request("user")
+    
+    def delete_authentication_method(self, network):
+        return self._delete_request(f"user/auth/social/{network}")
+    
+    def disable_classes(self):
+        return self._post_request("user/disable-classes")
+    
+    def toggle_equip_item(self, item_type: ItemType, item_key):
+        return self._post_request(f"user/equip/{item_type.value}/{item_key}")
+    
+    def feed_pet(self, pet_key, food_key):
+        return self._post_request(f"user/feed/{pet_key}/{food_key}")
+    
+    def get_anonymized_profile(self):
+        return self._get_request("user/anonymized")
+    
+    def get_purchasable_items(self):
+        return self._get_request("user/inventory/buy")
+    
+    def get_rewards(self):
+        return self._get_request("user/in-app-rewards")
+    
+    def hatch_pet(self, egg_key, hatching_potion_key):
+        return self._post_request(f"user/hatch/{egg_key}/{hatching_potion_key}")
+    
+    def login(self, username, password):
+        data = {
+            "username": username,
+            "password": password
+        }
+        return self._post_request("user/auth/local/login", data=data)
+    
+    def toggle_inn_status(self):
+        return self._post_request("user/sleep")
+    
+    def mark_pms_read(self):
+        return self._post_request("user/mark-pms-read")
+
+    def move_pinned_item(self, item_type: ItemType, path, position):
+        return self._post_request(f"user/move-pinned-item/{item_type.value}/{path}/move/to/{position}")
+
+    def open_mystery_item(self):
+        return self._post_request("user/open-mystery-item")
+    
+    def purchase_gem_item(self, item_type: GemPurchasableType, item_key):
+        return self._post_request(f"user/purchase/{item_type.value}/{item_key}")
+    
+    def purchase_hourglass_item(self, item_type: HourglassPurchasableType, item_key):
+        return self._post_request(f"user/purchase-hourglass/{item_type.value}/{item_key}")
+    
+    def read_card(self, card_type):
+        return self._post_request(f"user/read-card/{card_type}")
+    
+    def register(self, username, email, password):
+        data = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "confirmPassword": password
+        }
+        return self._post_request(f"user/auth/local/register", data=data)
+    
+    def release_mounts(self):
+        return self._post_request("user/release-mounts")
+    
+    def release_pets_and_mounts(self):
+        return self._post_request("user/release-both")
+    
+    def reroll(self):
+        return self._post_request("user/reroll")
+    
+    def send_password_reset_email(self, email):
+        data = {
+            "email": email
+        }
+        return self._post_request("user/reset-password", data=data)
+    
+    def reset_password(self, new_password):
+        data = {
+            "newPassword": new_password,
+            "confirmPassword": new_password
+        }
+        return self._post_request("user/auth/reset-password-set-new-one", data=data)
+    
+    def reset_user(self):
+        return self._post_request("user/reset")
+    
+    def revive(self):
+        return self._post_request("user/revive")
+    
+    def sell_gold_item(self, item_type: GoldSellableType, item_key, amount=1):
+        data = {
+            "amount": amount
+        } 
+        return self._post_request(f"user/sell/{item_type.value}/{item_key}")
 
     def __repr__(self):
         return f"<UserProfile [{str(self.user_id)}]>"

@@ -1,7 +1,17 @@
 from RequesterTemplate import RequesterTemplate
 from uuid import UUID
 
-from types.StatType import StatType
+from enums.ClassType import ClassType
+from enums.GearType import GearType
+from enums.GemPurchasableType import GemPurchasableType
+from enums.GoldSellableType import GoldSellableType
+from enums.HourglassPurchasableType import HourglassPurchasableType
+from enums.ItemType import ItemType
+from enums.PetType import PetType
+from enums.QuestType import QuestType
+from enums.SpellType import SpellType
+from enums.StatType import StatType
+from enums.UnequipAllType import UnequipAllType
 
 
 class User(RequesterTemplate):
@@ -57,11 +67,11 @@ class User(RequesterTemplate):
     def buy_health_potion(self):
         return self._post_request("user/buy-health-potion")
 
-    def buy_gear_item(self, item_key):
-        return self._post_request(f"user/buy-gear/{item_key}")
+    def buy_gear_item(self, item_key: GearType):
+        return self._post_request(f"user/buy-gear/{item_key.value}")
 
-    def buy_quest_with_gold(self, quest_key):
-        return self._post_request(f"user/buy-quest/{quest_key}")
+    def buy_quest_with_gold(self, quest_key: QuestType):
+        return self._post_request(f"user/buy-quest/{quest_key.value}")
 
     def buy_armoire(self):
         return self._post_request("user/buy-armoire")
@@ -102,11 +112,11 @@ class User(RequesterTemplate):
     def disable_classes(self):
         return self._post_request("user/disable-classes")
     
-    def toggle_equip_item(self, item_type: ItemType, item_key):
-        return self._post_request(f"user/equip/{item_type.value}/{item_key}")
+    def toggle_equip_item(self, item_type: ItemType, item_key: GearType):
+        return self._post_request(f"user/equip/{item_type.value}/{item_key.value}")
     
-    def feed_pet(self, pet_key, food_key):
-        return self._post_request(f"user/feed/{pet_key}/{food_key}")
+    def feed_pet(self, pet_key: PetType, food_key):
+        return self._post_request(f"user/feed/{pet_key.value}/{food_key}")
     
     def get_anonymized_profile(self):
         return self._get_request("user/anonymized")
@@ -139,11 +149,11 @@ class User(RequesterTemplate):
     def open_mystery_item(self):
         return self._post_request("user/open-mystery-item")
     
-    def purchase_gem_item(self, item_type: GemPurchasableType, item_key):
-        return self._post_request(f"user/purchase/{item_type.value}/{item_key}")
+    def purchase_gem_item(self, item_type: GemPurchasableType, item_key: GearType):
+        return self._post_request(f"user/purchase/{item_type.value}/{item_key.value}")
     
-    def purchase_hourglass_item(self, item_type: HourglassPurchasableType, item_key):
-        return self._post_request(f"user/purchase-hourglass/{item_type.value}/{item_key}")
+    def purchase_hourglass_item(self, item_type: HourglassPurchasableType, item_key: GearType):
+        return self._post_request(f"user/purchase-hourglass/{item_type.value}/{item_key.value}")
     
     def read_card(self, card_type):
         return self._post_request(f"user/read-card/{card_type}")
